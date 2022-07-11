@@ -1,0 +1,13 @@
+session:
+  aws_access_key_id:
+  aws_secret_access_key:
+  region_name:
+  profile_name:
+
+translate:
+  TerminologyNames: []
+  SourceLanguageCode: 'en'
+  TargetLanguageCode: 'ja'
+  Settings:
+    Formality: 'FORMAL'
+    Profanity: 'MASK'
