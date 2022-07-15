@@ -13,7 +13,7 @@ def get_args():
 
 def get_client(session_config):
     if session_config is not None and len(session_config) > 0:
-        session = boto3.Session()
+        session = boto3.Session(**session_config)
         return session.client('translate')
     return boto3.client('translate')
 
@@ -34,32 +34,24 @@ def translate(src_text, client, translate_kwargs):
 
     response = client.translate_text(
         Text=src_text,
-        TerminologyNames=[
-            'string',
-        ],
-        SourceLanguageCode='string',
-        TargetLanguageCode='string',
-        Settings={
-            'Formality': 'FORMAL',
-            'Profanity': 'MASK'
-        },
         **translate_kwargs
     )
     return response
 
 
 def main(args):
-    config = args.config
+    config = load_config(args.config)
     translate_config = config['translate']
-    client = boto3.client('translate')
+    client = get_client(config.get('session'))
     src_file_paths = args.src
     if src_file_paths is None or len(src_file_paths) == 0:
         translate(None, client, translate_config)
 
     for src_file_path in args.src:
         src_texts = load_src_texts(src_file_path)
-        response = translate(src_texts, client, **config['translate'])
-
+        for src_text in src_texts:
+            response = translate(src_text, client, config['translate'])
+            print(response)
 
 
 if __name__ == '__main__':
